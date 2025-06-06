@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Pantry Items - PantryPal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700&family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes slideUpInItem {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            font-weight: 400;
+            line-height: 1.75;
+            background-color: #fdfcf7; 
+            color: #5D4037;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 50px 20px;
+        }
+
+        .app-container {
+            background-color: #ffffff;
+            padding: 0;
+            border-radius: 8px;
+            border: 1px solid #e0c9a6; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08), 0 0 0 5px #fff, 0 0 0 6px #e0c9a6;
+            width: 100%;
+            max-width: 1200px; 
+            margin-top: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .app-header {
+            text-align: center;
+            padding: 30px 25px 25px; 
+            background-color: #f9f6f0;
+            border-bottom: 1px dashed #d3bba0;
+        }
+
+        .app-header h1 {
+            font-family: 'Playfair Display', serif; /* REVERTED: Back to Playfair Display */
+            color: #704214; /* REVERTED: Original color */
+            font-size: 2.5em; /* REVERTED: Original size */
+            font-weight: 700; /* REVERTED: Original weight */
+            margin-bottom: 15px; /* REVERTED: Original margin */
+            line-height: 1.1; /* Keeping this from previous, as it's good practice */
+        }
+
+        .back-link-container {
+            text-align: center;
+            margin-bottom: 10px; 
+        }
+
+        a.back-link {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.1em;
+            color: #8B4513;
+            border: 1px solid #d3bba0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        a.back-link:hover {
+            background-color: #fffaf2;
+            border-color: #B08D57;
+        }
+        
+        #lowStockLegend {
+            font-family: 'EB Garamond', serif;
+            font-size: 0.95em;
+            color: #7a5e4d;
+            text-align: center;
+            margin: 15px auto 25px; 
+            padding: 10px 20px;
+            border: 1px dashed #e0c9a6;
+            border-radius: 5px;
+            background-color: #fcfaf5;
+            max-width: 80%;
+        }
+
+        #lowStockLegend .low-stock-example {
+            font-weight: 700;
+            color: #c0392b;
+        }
+
+        /* Styles for Filter and Sort controls */
+        .controls-container {
+            padding: 20px 45px 10px; 
+            background-color: #fffdf9; 
+            border-bottom: 1px dashed #d3bba0; 
+            margin-bottom: 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .controls-container label {
+            font-family: 'EB Garamond', serif;
+            font-weight: 500;
+            color: #6a5541;
+            font-size: 1em;
+            margin-bottom: 5px; 
+            display: block; 
+        }
+
+        .controls-container input[type="text"],
+        .controls-container select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #d3bba0;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: 'EB Garamond', serif;
+            background-color: #fffaf2;
+            color: #5D4037;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .controls-container input[type="text"]:focus,
+        .controls-container select:focus {
+            outline: none;
+            border-color: #B08D57;
+            box-shadow: 0 0 8px rgba(176, 141, 87, 0.2);
+            background-color: #fff;
+        }
+
+        #categoriesContainer { 
+            padding: 20px 15px 40px; 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 30px; 
+        }
+
+        .category-box {
+            margin-bottom: 0; 
+            padding: 20px;
+            background-color: #fffdf9; 
+            border: 1px solid #f0e6d8;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .category-title {
+            font-family: 'Playfair Display', serif;
+            color: #704214;
+            font-size: 1.6em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0c9a6;
+        }
+
+        .category-box ul {
+            list-style: none;
+            padding: 0;
+            max-height: 300px; 
+            overflow-y: auto; 
+            padding-right: 5px; 
+            padding-left: 5px;
+        }
+
+        .category-box li.pantry-item-detailed { 
+            padding: 12px 5px; 
+            border-bottom: 1px dotted #d3bba0; 
+            margin-bottom: 8px; 
+            display: flex;
+            flex-direction: row; 
+            justify-content: space-between; 
+            align-items: center; 
+            transition: background-color 0.3s ease;
+            opacity:0;
+            animation: slideUpInItem 0.5s ease-out forwards; 
+            animation-delay: 0s; 
+        }
+        .category-box li.pantry-item-detailed:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .category-box li.pantry-item-detailed:hover {
+            background-color: #fffaf2; 
+        }
+        
+        .item-text-details {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; 
+            margin-right: 10px; 
+        }
+
+        .item-info .item-name { 
+            font-family: 'EB Garamond', serif; 
+            font-weight: 500; 
+            font-size: 1.1em; 
+            color: #5D4037; 
+        }
+        
+        .item-container-type {
+            font-family: 'EB Garamond', serif;
+            font-style: italic;
+            font-size: 0.85em;
+            color: #7a5e4d;
+            padding-top: 3px;
+        }
+
+        .item-actions { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-end; 
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        /* Styles for quantity display */
+        .item-quantity-display {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; 
+            margin-bottom: 8px; 
+            text-align: right; 
+        }
+        .quantity-text-label {
+            font-family: 'EB Garamond', serif;
+            font-style: italic;
+            font-size: 0.9em;
+            color: #7a5e4d;
+            margin-right: 5px;
+        }
+        .quantity-value-badge { 
+            background-color: transparent;
+            color: #8B4513; 
+            border: 1px solid #e0c9a6; 
+            padding: 4px 10px;
+            border-radius: 15px; 
+            font-family: 'EB Garamond', serif; 
+            font-size: 0.9em;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        /* Low stock badge styling */
+        .quantity-value-badge.low-stock {
+            background-color: #fce4e4; 
+            color: #c0392b;           
+            border-color: #ef9a9a;    
+            font-weight: 700;         
+        }
+
+        #loadingMessageAll, #listErrorMessageAll { 
+            grid-column: 1 / -1; 
+            text-align: center;
+            font-family: 'EB Garamond', serif;
+            font-style: italic;
+            color: #704214;
+            margin-top: 20px;
+            padding: 10px;
+        }
+        #listErrorMessageAll { 
+            color: #c0392b; 
+            border: 1px dashed #c0392b;
+            background-color: #fdecea;
+            border-radius: 4px; 
+        }
+        #noResults {
+            grid-column: 1 / -1; 
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px; 
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f0ede5; 
+            border-radius: 5px; 
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d3bba0; 
+            border-radius: 5px; 
+            border: 2px solid #f0ede5; 
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B08D57; 
+        }
+
+
+        /* Responsive Adjustments */
+        @media (min-width: 1024px) { 
+            #categoriesContainer { 
+                grid-template-columns: repeat(3, 1fr); 
+            }
+        }
+        @media (max-width: 1023px) { 
+            #categoriesContainer { 
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        }
+        @media (max-width: 850px) { 
+            .app-container { max-width: 600px; }
+            #lowStockLegend { margin: 10px auto 20px; }
+            .controls-container { padding: 15px 30px 10px; }
+        }
+        @media (max-width: 700px) { 
+            body { padding: 20px 10px; }
+            .app-container { margin-top: 20px; margin-bottom: 20px; border-radius: 10px; }
+            .app-header { padding: 25px 20px 20px; }
+            .app-header h1 { font-size: 2em; } /* Smaller on small screens */
+            #categoriesContainer { 
+                grid-template-columns: 1fr; 
+                padding: 15px 10px 30px; 
+            }
+            .category-box { padding: 15px; }
+            .category-title { font-size: 1.4em; }
+            #lowStockLegend { font-size: 0.9em; padding: 8px 15px; }
+            .controls-container { padding: 15px 20px 10px; }
+            .controls-container input[type="text"],
+            .controls-container select {
+                padding: 8px 12px;
+                font-size: 0.95em;
+            }
+        }
+        @media (max-width: 480px) { 
+            .app-header h1 { font-size: 1.8em; }
+            .category-title { font-size: 1.3em; }
+            .category-box li.pantry-item-detailed { padding: 10px 0px; flex-direction: column; align-items: flex-start; }
+            .item-text-details { margin-right: 0; margin-bottom: 8px; } 
+            .item-actions { margin-left: 0; margin-top: 8px; width: 100%; display: flex; flex-direction: row; justify-content: flex-start; } 
+            .item-actions button { margin-right: 8px; margin-bottom: 0; }
+            .item-quantity-display { justify-content: flex-start; margin-bottom:0; margin-right: auto; }
+            a.back-link { font-size: 1em; padding: 6px 12px; }
+            #lowStockLegend { font-size: 0.85em; padding: 6px 10px; }
+            .controls-container { padding: 10px 15px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h1>All Pantry Stock</h1>
+            <div class="back-link-container">
+                <a href="Index.html" class="back-link">&laquo; Back to Main Pantry</a>
+            </div>
+        </header>
+
+        <!-- Low Stock Legend -->
+        <div id="lowStockLegend">
+            Items with quantity <span class="quantity-value-badge low-stock">1</span> indicate low stock.
+        </div>
+
+        <!-- Filter and Sort Controls -->
+        <div class="controls-container">
+            <div>
+                <label for="filterInput">Filter by Name/Category:</label>
+                <input type="text" id="filterInput" placeholder="e.g., milk, canned goods...">
+            </div>
+            <div>
+                <label for="sortCriteria">Sort by:</label>
+                <select id="sortCriteria">
+                    <option value="nameAsc">Item Name (A-Z)</option>
+                    <option value="nameDesc">Item Name (Z-A)</option>
+                    <option value="quantityAsc">Quantity (Low to High)</option>
+                    <option value="quantityDesc">Quantity (High to Low)</option>
+                    <option value="categoryAsc">Category (A-Z)</option>
+                    <option value="categoryDesc">Category (Z-A)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="categoriesContainer">
+        </div>
+        
+        <p id="loadingMessageAll" style="text-align:center; display:none; padding: 20px;">Loading all items...</p>
+        <p id="listErrorMessageAll" style="display:none; padding: 20px;">Could not load pantry items.</p>
+        <p id="noResults" style="text-align:center; color:#777; font-style:italic; display:none; padding: 20px;">No items match your current filter/sort.</p>
+        
+    </div>
+
+    <script>
+        const apiUrl = 'https://w8loyulgsd.execute-api.us-east-1.amazonaws.com/pantrydev/items'; 
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const loadingMessageAll = document.getElementById('loadingMessageAll');
+        const listErrorMessageAll = document.getElementById('listErrorMessageAll');
+        const noResultsMessage = document.getElementById('noResults'); 
+
+        const LOW_STOCK_THRESHOLD = 1; 
+
+        const filterInput = document.getElementById('filterInput');
+        const sortCriteria = document.getElementById('sortCriteria');
+
+        let allPantryItems = [];
+        let currentFilter = '';
+        let currentSort = 'nameAsc'; 
+
+        /**
+         * Renders the items to the DOM based on current filter and sort settings.
+         * This function now handles filtering, sorting, and grouping.
+         */
+        function renderFilteredAndSortedItems() {
+            let itemsToProcess = [...allPantryItems]; 
+
+            // 1. Apply Filtering
+            if (currentFilter) {
+                const lowerCaseFilter = currentFilter.toLowerCase();
+                itemsToProcess = itemsToProcess.filter(item =>
+                    (item.itemName && item.itemName.toLowerCase().includes(lowerCaseFilter)) ||
+                    (item.category && item.category.toLowerCase().includes(lowerCaseFilter))
+                );
+            }
+
+            // 2. Apply Sorting (before grouping)
+            itemsToProcess.sort((a, b) => {
+                switch (currentSort) {
+                    case 'nameAsc':
+                        return (a.itemName || '').localeCompare(b.itemName || '');
+                    case 'nameDesc':
+                        return (b.itemName || '').localeCompare(a.itemName || '');
+                    case 'quantityAsc':
+                        return (a.quantity || 0) - (b.quantity || 0);
+                    case 'quantityDesc':
+                        return (b.quantity || 0) - (a.quantity || 0);
+                    case 'categoryAsc':
+                        return (a.category || 'Uncategorized').localeCompare(b.category || 'Uncategorized');
+                    case 'categoryDesc':
+                        return (b.category || 'Uncategorized').localeCompare(a.category || 'Uncategorized');
+                    default:
+                        return 0; 
+                }
+            });
+
+            // 3. Clear previous content in categories container
+            categoriesContainer.innerHTML = '';
+
+            // 4. Group items by category (after filtering and sorting)
+            if (itemsToProcess.length === 0) {
+                noResultsMessage.style.display = 'block';
+                return; 
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+
+            const groupedItems = itemsToProcess.reduce((acc, item) => {
+                const category = item.category || 'Uncategorized'; 
+                if (!acc[category]) {
+                    acc[category] = [];
+                }
+                acc[category].push(item);
+                return acc;
+            }, {});
+
+            const sortedCategories = Object.keys(groupedItems).sort(); 
+
+            let overallItemIndex = 0; 
+            sortedCategories.forEach(category => {
+                const categoryBox = document.createElement('div');
+                categoryBox.classList.add('category-box');
+
+                const categoryTitle = document.createElement('h3');
+                categoryTitle.classList.add('category-title');
+                categoryTitle.textContent = category;
+                categoryBox.appendChild(categoryTitle);
+
+                const categoryList = document.createElement('ul');
+                categoryBox.appendChild(categoryList);
+
+                groupedItems[category].forEach(item => { 
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('pantry-item-detailed');
+                    
+                    const itemTextDetailsDiv = document.createElement('div');
+                    itemTextDetailsDiv.classList.add('item-text-details');
+
+                    const itemInfoDiv = document.createElement('div'); 
+                    itemInfoDiv.classList.add('item-info'); 
+                    const itemNameSpan = document.createElement('span');
+                    itemNameSpan.classList.add('item-name');
+                    itemNameSpan.textContent = item.itemName || 'Unnamed Item'; 
+                    itemInfoDiv.appendChild(itemNameSpan); 
+                    itemTextDetailsDiv.appendChild(itemInfoDiv); 
+
+                    if (item.containerType && item.containerType.toLowerCase() !== 'n/a' && item.containerType.trim() !== '') {
+                        const containerTypeSpan = document.createElement('div');
+                        containerTypeSpan.classList.add('item-container-type');
+                        containerTypeSpan.textContent = `Container: ${item.containerType}`;
+                        itemTextDetailsDiv.appendChild(containerTypeSpan);
+                    }
+                    listItem.appendChild(itemTextDetailsDiv);
+
+                    const itemActionsAndQuantityDiv = document.createElement('div');
+                    itemActionsAndQuantityDiv.classList.add('item-actions'); 
+                    itemActionsAndQuantityDiv.style.display = 'flex'; 
+                    itemActionsAndQuantityDiv.style.flexDirection = 'column';
+                    itemActionsAndQuantityDiv.style.alignItems = 'flex-end'; 
+
+                    const quantityDisplayDiv = document.createElement('div');
+                    quantityDisplayDiv.classList.add('item-quantity-display'); 
+                                            
+                    const quantityTextLabelSpan = document.createElement('span');
+                    quantityTextLabelSpan.classList.add('quantity-text-label');
+                    quantityTextLabelSpan.textContent = 'Quantity: ';
+                    
+                    const quantityValueBadgeSpan = document.createElement('span');
+                    quantityValueBadgeSpan.classList.add('quantity-value-badge');
+                    quantityValueBadgeSpan.textContent = item.quantity !== undefined ? item.quantity : 'N/A';
+
+                    if (item.quantity !== undefined && item.quantity <= LOW_STOCK_THRESHOLD) {
+                        quantityValueBadgeSpan.classList.add('low-stock');
+                    }
+
+                    quantityDisplayDiv.appendChild(quantityTextLabelSpan);
+                    quantityDisplayDiv.appendChild(quantityValueBadgeSpan);
+                    itemActionsAndQuantityDiv.appendChild(quantityDisplayDiv); 
+                    
+                    listItem.appendChild(itemActionsAndQuantityDiv); 
+                    
+                    categoryList.appendChild(listItem);
+                    listItem.style.animationDelay = `${overallItemIndex * 0.03}s`;
+                    overallItemIndex++;
+                });
+                categoriesContainer.appendChild(categoryBox);
+            });
+        }
+
+        // Modified fetchAllPantryItems to store data and then render
+        async function fetchAllPantryItems() {
+            console.log('--- fetchAllPantryItems function called ---'); 
+            categoriesContainer.innerHTML = ''; 
+            loadingMessageAll.style.display = 'block';
+            listErrorMessageAll.style.display = 'none';
+            noResultsMessage.style.display = 'none'; 
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) { 
+                    loadingMessageAll.style.display = 'none'; 
+                    const errorText = await response.text(); 
+                    console.error('Fetch error response text (GET /items for all_items.html):', errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                }
+                
+                const lambdaProxyResponse = await response.json();
+                let actualData;
+                if (lambdaProxyResponse.body && typeof lambdaProxyResponse.body === 'string') {
+                    actualData = JSON.parse(lambdaProxyResponse.body);
+                } else { actualData = lambdaProxyResponse.body || lambdaProxyResponse; }
+                
+                console.log('Received actualData in fetchAllPantryItems:', actualData); 
+                loadingMessageAll.style.display = 'none';
+
+                if (actualData && actualData.items && Array.isArray(actualData.items)) {
+                    allPantryItems = actualData.items; 
+                    renderFilteredAndSortedItems(); 
+                } else { 
+                    allPantryItems = []; 
+                    categoriesContainer.innerHTML = '<p style="text-align: center; color: #777; font-style: italic; padding: 20px 0;">Your pantry is currently empty.</p>';
+                    noResultsMessage.style.display = 'none'; 
+                }
+            } catch (error) { 
+                console.error('Error in fetchAllPantryItems:', error); 
+                loadingMessageAll.style.display = 'none';
+                listErrorMessageAll.textContent = `Failed to load pantry items: ${error.message}.`;
+                listErrorMessageAll.style.display = 'block';
+                categoriesContainer.innerHTML = ''; 
+                noResultsMessage.style.display = 'none'; 
+            }
+        }
+
+        // Event Listeners for Filter and Sort controls
+        filterInput.addEventListener('input', (event) => {
+            currentFilter = event.target.value;
+            renderFilteredAndSortedItems(); 
+        });
+
+        sortCriteria.addEventListener('change', (event) => {
+            currentSort = event.target.value;
+            renderFilteredAndSortedItems(); 
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchAllPantryItems);
+    </script>
+
+</body>
+</html>

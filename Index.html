@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PantryPal - Your Elegant Pantry Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700&family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes slideUpIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            font-weight: 400;
+            line-height: 1.75;
+            background-color: #fdfcf7; /* Soft, warm ivory background */
+            color: #5D4037;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 50px 20px;
+        }
+
+        .app-container {
+            background-color: #ffffff;
+            padding: 0;
+            border-radius: 8px;
+            border: 1px solid #e0c9a6; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08), 0 0 0 5px #fff, 0 0 0 6px #e0c9a6;
+            width: 100%;
+            max-width: 680px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .app-header {
+            text-align: center;
+            padding: 40px 25px 35px;
+            background-color: #f9f6f0;
+            border-bottom: 1px dashed #d3bba0;
+        }
+
+        .app-header h1 {
+            font-family: 'Great Vibes', cursive;
+            color: #8B4513;
+            font-size: 4.8em;
+            font-weight: normal;
+            line-height: 1.1;
+            margin-bottom: 5px;
+        }
+        
+        .form-section, .list-section {
+            padding: 30px 45px 40px;
+        }
+        .list-section {
+             padding-bottom: 20px; 
+        }
+
+
+        .form-section h2, .list-section h2 {
+            font-family: 'Playfair Display', serif; 
+            color: #704214;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: 600;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0c9a6;
+        }
+         .form-section h2 .fas { 
+            display: none; 
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'EB Garamond', serif; 
+            font-weight: 500; 
+            margin-bottom: 8px;
+            color: #6a5541; 
+            font-size: 1.05em; 
+        }
+        
+        .form-group input::placeholder {
+            color: #b0a08f; 
+            font-weight: 400; 
+            font-style: italic;
+            font-family: 'EB Garamond', serif; 
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select { 
+            width: 100%;
+            padding: 12px 15px; 
+            border: 1px solid #d3bba0; 
+            border-radius: 4px; 
+            font-size: 1em;
+            font-family: 'EB Garamond', serif; 
+            background-color: #fffaf2; 
+            color: #5D4037;
+            transition: all 0.3s ease;
+            appearance: none; 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus { 
+            outline: none;
+            border-color: #B08D57; 
+            box-shadow: 0 0 8px rgba(176, 141, 87, 0.2); 
+            background-color: #fff;
+        }
+
+        /* Button container for side-by-side layout */
+        .form-buttons {
+            display: flex;
+            justify-content: center; /* Center the group of buttons */
+            gap: 15px; /* Space between buttons */
+            margin-top: 20px; /* Space from form fields above */
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        button.submit-btn, a.view-all-btn, button.clear-btn { /* Added clear-btn to shared styles */
+            min-width: 150px; 
+            padding: 12px 25px; 
+            background-color: transparent; 
+            color: #8B4513; 
+            border: 2px solid #B08D57; 
+            border-radius: 30px; 
+            font-family: 'EB Garamond', serif; 
+            font-size: 1.1em;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: capitalize; 
+            cursor: pointer;
+            text-decoration: none; 
+            text-align: center; 
+            transition: all 0.3s ease;
+            flex-grow: 1; 
+            max-width: 250px; 
+        }
+         button.submit-btn .fas {
+            display: none; 
+        }
+
+        button.submit-btn:hover, a.view-all-btn:hover, button.clear-btn:hover { 
+            background-color: #B08D57; 
+            color: #ffffff; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            transform: translateY(-2px);
+        }
+
+        button.submit-btn:active, a.view-all-btn:active, button.clear-btn:active { 
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(176, 141, 87, 0.2);
+        }
+        
+        a.view-all-btn { 
+            margin: 25px auto 10px; 
+            padding: 14px 35px;
+            font-size: 1.15em;
+            background-color: #fffaf2;
+            border: 1px solid #d3bba0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: block; 
+            max-width: 300px; 
+            width: 100%; 
+            box-sizing: border-box; 
+            text-align: center; 
+        }
+        a.view-all-btn:hover {
+             background-color: #f6f0e5; 
+             border-color: #B08D57; 
+             color: #5D4037;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .hidden {
+            display: none !important; 
+        }
+
+
+        ul#pantryList {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            margin-bottom: 15px; 
+        }
+
+        ul#pantryList li.pantry-item {
+            background-color: transparent; 
+            padding: 15px 10px;
+            border-bottom: 1px dotted #d3bba0; 
+            margin-bottom: 10px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+            opacity:0;
+            animation: slideUpIn 0.5s ease-out forwards; 
+            animation-delay: 0s; 
+        }
+        ul#pantryList li.pantry-item:last-child {
+            border-bottom: none;
+        }
+        
+        ul#pantryList li.pantry-item:hover {
+            background-color: #fffaf2; 
+        }
+
+        /* REVERTED: Original styling for item name (non-link) */
+        ul#pantryList li .item-name { 
+            font-family: 'EB Garamond', serif; 
+            font-weight: 500; 
+            font-size: 1.15em; 
+            color: #5D4037; 
+            flex-grow: 1;
+        }
+        /* Removed .item-name-link styles as they are no longer needed */
+
+
+        ul#pantryList li .item-quantity {
+            background-color: transparent;
+            color: #8B4513; 
+            border: 1px solid #e0c9a6; 
+            padding: 5px 12px;
+            border-radius: 20px; 
+            font-family: 'EB Garamond', serif; 
+            font-size: 0.95em;
+            font-weight: 500;
+            margin-left: 15px;
+        }
+
+        /* Low stock badge styling for index.html */
+        .item-quantity.low-stock {
+            background-color: #fce4e4; 
+            color: #c0392b;           
+            border-color: #ef9a9a;    
+            font-weight: 700;         
+        }
+
+        #loadingMessage, #errorMessage { 
+            text-align: center;
+            font-family: 'EB Garamond', serif;
+            font-style: italic;
+            color: #704214;
+            margin-top: 20px;
+            padding: 10px;
+        }
+        #addErrorMessage, #listErrorMessage { 
+            color: #c0392b; 
+            border: 1px dashed #c0392b;
+            background-color: #fdecea;
+            border-radius: 4px; 
+        }
+        #addSuccessMessage {
+            color: #2e7d32;
+            border: 1px dashed #2e7d32;
+            background-color: #eaf7ea;
+            border-radius: 4px; 
+        }
+
+        /* Empty list message styling */
+        .empty-pantry-message {
+            text-align: center;
+            color: #704214; 
+            font-family: 'Playfair Display', serif; 
+            font-size: 1.3em;
+            font-style: normal; 
+            padding: 40px 20px; 
+            background-color: #fcfaf5; 
+            border: 1px dashed #d3bba0; 
+            border-radius: 8px; 
+            margin-top: 30px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+        .empty-pantry-message .fas {
+            font-size: 1.5em; 
+            color: #8B4513; 
+            margin-bottom: 15px; 
+            display: block; 
+        }
+
+
+        /* Responsive Adjustments */\
+        @media (max-width: 700px) { \
+            body {\
+                 padding: 20px 10px;\
+            }\
+            .app-container {\
+                margin-top: 20px;\
+                margin-bottom: 20px;\
+                border-radius: 10px; \
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06), 0 0 0 3px #fff, 0 0 0 4px #e0c9a6;\
+            }\
+            .app-header {\
+                padding: 30px 20px 25px;\
+            }\
+            .app-header h1 {\
+                font-size: 3.5em; \
+            }\
+            .form-section, .list-section {\
+                padding: 25px 30px; \
+            }\
+             .list-section { padding-bottom: 15px; }\
+            .form-section h2, .list-section h2 {\
+                font-size: 1.6em;\
+            }\
+             .form-group input[type="text"],\
+            .form-group input[type="number"],\
+            .form-group select {\
+                padding: 12px 14px;\
+                font-size: 1em;\
+            }\
+            .empty-pantry-message {
+                font-size: 1.1em;
+                padding: 30px 15px;
+            }
+            .form-buttons { /* For smaller screens, stack buttons if needed */
+                flex-direction: column;
+                gap: 10px;
+            }
+            .form-buttons button {
+                max-width: 100%; /* Take full width when stacked */
+            }
+        }\
+        @media (max-width: 480px) { \
+            .app-header h1 {\
+                font-size: 2.8em; \
+            }\
+             .form-section h2, .list-section h2 {\
+                font-size: 1.4em;\
+            }\
+            .form-group input[type="text"],\
+            .form-group input[type="number"],\
+            .form-group select, \
+            button.submit-btn, \
+            a.view-all-btn, \
+            button.clear-btn { 
+                padding: 12px 15px; \
+                font-size: 1em;\
+            }\
+            ul#pantryList li.pantry-item {\
+                padding: 12px 8px;\
+            }\
+             .empty-pantry-message {
+                font-size: 1em;
+                padding: 25px 10px;
+            }
+            .empty-pantry-message .fas {
+                font-size: 1.3em;
+                margin-bottom: 10px;
+            }
+        }\
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h1>PantryPal</h1>
+        </header>
+
+        <section class="form-section">
+            <h2>Add an Item</h2>
+            <form id="addItemForm">
+                <div class="form-group">
+                    <label for="itemName">Item Description</label>
+                    <input type="text" id="itemName" name="itemName" placeholder="e.g., French Champagne" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category">
+                        <option value="Other" selected>Other</option>
+                        <option value="Canned Goods">Canned Goods</option>
+                        <option value="Grains, Pasta & Cereals">Grains, Pasta & Cereals</option>
+                        <option value="Baking & Cooking">Baking & Cooking Supplies</option>
+                        <option value="Condiments & Sauces">Condiments & Sauces</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Beverages">Beverages</option>
+                        <option value="Spices">Spices</option>
+                        <option value="Produce">Produce (Fruits & Veggies)</option>
+                        <option value="Frozen">Frozen Foods</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="containerType">Container Type</label>
+                    <select id="containerType" name="containerType">
+                        <option value="N/A" selected>N/A (Not Applicable)</option>
+                        <option value="Jar">Jar</option>
+                        <option value="Bottle">Bottle</option>
+                        <option value="Can">Can</option>
+                        <option value="Box">Box</option>
+                        <option value="Bag">Bag</option>
+                        <option value="Carton">Carton</option>
+                        <option value="Container">Container (Generic)</option>
+                        <option value="Packet">Packet</option>
+                        <option value="Wrapper">Wrapper</option>
+                        <option value="Bunch">Bunch (e.g., for herbs, bananas)</option>
+                        <option value="Head">Head (e.g., for lettuce, garlic)</Head>
+                        <option value="Piece">Piece (Individual Item)</option>
+                    </select>
+                </div>
+                <!-- Container for buttons -->
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">
+                        Record Item
+                    </button>
+                    <button type="button" class="clear-btn" id="clearFormBtn">
+                        Clear Form
+                    </button>
+                </div>
+            </form>
+            <div id="addErrorMessage" style="display:none; margin-top: 15px; padding:10px; text-align:center;"></div>
+            <div id="addSuccessMessage" style="display:none; margin-top: 15px; padding:10px; text-align:center;"></div>
+
+        </section>
+
+        <section class="list-section">
+            <h2>Current Holdings (Recent Items)</h2> 
+            <ul id="pantryList">
+                </ul>
+            <a href="all_items.html" id="viewAllItemsBtn" class="view-all-btn hidden">View All Pantry Items</a>
+            
+            <p id="loadingMessage" style="text-align:center; display:none; margin-top:10px;">Reviewing your inventory...</p>
+            <p id="listErrorMessage" style="display:none; margin-top: 10px; padding:10px; text-align:center;">Could not load pantry items.</p>
+        </section>
+    </div>
+
+    <script>
+        // Changed all top-level 'const' declarations to 'var' to resolve 'Identifier has already been declared' error.
+        var apiUrl = 'https://w8loyulgsd.execute-api.us-east-1.amazonaws.com/pantrydev/items'; 
+        var pantryList = document.getElementById('pantryList');
+        var addItemForm = document.getElementById('addItemForm');
+        var itemNameInput = document.getElementById('itemName');
+        var quantityInput = document.getElementById('quantity');
+        var categoryInput = document.getElementById('category');
+        var containerTypeInput = document.getElementById('containerType');
+
+        var loadingMessage = document.getElementById('loadingMessage');
+        var addErrorMessage = document.getElementById('addErrorMessage');
+        var addSuccessMessage = document.getElementById('addSuccessMessage');
+        var listErrorMessage = document.getElementById('listErrorMessage');
+        var viewAllItemsBtn = document.getElementById('viewAllItemsBtn'); 
+
+        var clearFormBtn = document.getElementById('clearFormBtn');
+
+        var MAX_ITEMS_ON_MAIN_PAGE = 5; 
+        var LOW_STOCK_THRESHOLD_INDEX = 1; // Low stock threshold for index.html
+
+        async function fetchPantryItems() {
+            console.log('--- fetchPantryItems function called (index.html) ---'); 
+            
+            pantryList.innerHTML = ''; 
+            loadingMessage.style.display = 'block';
+            listErrorMessage.style.display = 'none';
+            if(viewAllItemsBtn) viewAllItemsBtn.classList.add('hidden'); 
+
+            try {
+                var response = await fetch(apiUrl); // Changed to var
+                console.log('Fetch response status (GET /items index.html):', response.status);
+
+                if (!response.ok) { 
+                    loadingMessage.style.display = 'none'; 
+                    var errorText = await response.text(); // Changed to var
+                    console.error('Fetch error response text (GET /items index.html):', errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                }
+                
+                var lambdaProxyResponse = await response.json(); // Changed to var
+                console.log('Lambda proxy response received (GET /items index.html):', JSON.stringify(lambdaProxyResponse, null, 2));
+
+                var actualData; // Changed to var
+                if (lambdaProxyResponse.body && typeof lambdaProxyResponse.body === 'string') {
+                    actualData = JSON.parse(lambdaProxyResponse.body);
+                } else {
+                    actualData = lambdaProxyResponse.body || lambdaProxyResponse; 
+                }
+                
+                console.log('Actual data after parsing body (GET /items index.html):', JSON.stringify(actualData, null, 2)); 
+                
+                loadingMessage.style.display = 'none';
+
+                if (actualData && actualData.items && Array.isArray(actualData.items)) {
+                    if (actualData.items.length > 0) {
+                        // Sort items by dateAdded descending
+                        actualData.items.sort((a, b) => {
+                            var dateA = new Date(a.dateAdded); // Changed to var
+                            var dateB = new Date(b.dateAdded); // Changed to var
+                            return dateB - dateA; // Descending order (most recent first)
+                        });
+
+                        var itemsToDisplay = actualData.items.slice(0, MAX_ITEMS_ON_MAIN_PAGE); // Changed to var
+
+                        itemsToDisplay.forEach((item, index) => {
+                            console.log('Processing item (index.html):', JSON.stringify(item, null, 2)); 
+
+                            var listItem = document.createElement('li'); // Changed to var
+                            listItem.classList.add('pantry-item');
+                            
+                            // Reverted: Use span for item name (non-clickable)
+                            var itemNameSpan = document.createElement('span'); // Changed to var
+                            itemNameSpan.classList.add('item-name'); // Original class for styling
+                            itemNameSpan.textContent = item.itemName || 'Unnamed Item'; 
+
+                            var itemQuantitySpan = document.createElement('span'); // Changed to var
+                            itemQuantitySpan.classList.add('item-quantity');
+                            itemQuantitySpan.textContent = item.quantity !== undefined ? item.quantity : 'N/A';
+                            
+                            // Add low-stock class if quantity is low for index.html
+                            if (item.quantity !== undefined && item.quantity <= LOW_STOCK_THRESHOLD_INDEX) {
+                                itemQuantitySpan.classList.add('low-stock');
+                            }
+
+                            listItem.appendChild(itemNameSpan); // Append the span
+                            listItem.appendChild(itemQuantitySpan);
+                            
+                            pantryList.appendChild(listItem);
+                            listItem.style.animationDelay = `${index * 0.05}s`;
+                        });
+
+                        if (actualData.items.length > MAX_ITEMS_ON_MAIN_PAGE && viewAllItemsBtn) {
+                            viewAllItemsBtn.classList.remove('hidden');
+                        } else if (viewAllItemsBtn) {
+                            viewAllItemsBtn.classList.add('hidden');
+                        }
+
+                    } else { 
+                        // Use a more styled empty message
+                        pantryList.innerHTML = `
+                            <li class="empty-pantry-message">
+                                <i class="fas fa-box-open"></i>
+                                <span>Your pantry is currently empty.</span>
+                                <span>Time to add some delicious items!</span>
+                            </li>
+                        `;
+                        if(viewAllItemsBtn) viewAllItemsBtn.classList.add('hidden');
+                    }
+                } else {
+                    // Use a more styled empty message for overall empty/error cases
+                    pantryList.innerHTML = `
+                        <li class="empty-pantry-message">
+                            <i class="fas fa-box-open"></i>
+                            <span>Your pantry seems to be empty or inaccessible.</span>
+                            <span>Try adding an item or check your connection.</span>
+                        </li>
+                    `;
+                    if(viewAllItemsBtn) viewAllItemsBtn.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error in fetchPantryItems (index.html):', error); 
+                loadingMessage.style.display = 'none';
+                listErrorMessage.textContent = `Failed to load pantry items: ${error.message}.`;
+                listErrorMessage.style.display = 'block';
+                pantryList.innerHTML = ''; 
+                if(viewAllItemsBtn) viewAllItemsBtn.classList.add('hidden');
+            }
+        }
+
+        async function handleAddItem(event) {
+            event.preventDefault(); 
+            console.log('--- handleAddItem function called (index.html) ---');
+
+            var itemName = itemNameInput.value.trim(); // Changed to var
+            var quantity = parseInt(quantityInput.value, 10); // Changed to var
+            var category = categoryInput.value; // Changed to var
+            var containerType = containerTypeInput.value; // Changed to var
+
+
+            if (!itemName) {
+                addErrorMessage.textContent = 'Item name cannot be empty.';
+                addErrorMessage.style.display = 'block';
+                addSuccessMessage.style.display = 'none';
+                return;
+            }
+            if (isNaN(quantity) || quantity < 1) {
+                addErrorMessage.textContent = 'Quantity must be a number greater than 0.';
+                addErrorMessage.style.display = 'block';
+                addSuccessMessage.style.display = 'none';
+                return;
+            }
+
+            var newItem = { // Changed to var
+                itemName: itemName,
+                quantity: quantity,
+                category: category,
+                containerType: containerType
+            };
+
+            var submitButton = addItemForm.querySelector('button.submit-btn'); // Changed to var
+            var originalButtonText = submitButton.textContent; // Changed to var
+            submitButton.disabled = true;
+            submitButton.textContent = 'Adding...'; 
+            addErrorMessage.style.display = 'none';
+            addSuccessMessage.style.display = 'none';
+
+            try {
+                var response = await fetch(apiUrl, { // Changed to var
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newItem),
+                });
+                
+                console.log('Add item response status (POST /items index.html):', response.status); 
+
+                if (!response.ok) {
+                    var errorDetails = `HTTP error! status: ${response.status}`; // Changed to var
+                    try {
+                        var errorData = await response.json(); // Changed to var
+                        errorDetails = errorData.error || errorData.message || errorDetails;
+                    } catch (e) { /* Ignore */ }
+                    throw new Error(errorDetails);
+                }
+
+                var result = await response.json(); // Changed to var
+                console.log('Item added successfully (response from POST on index.html):', result); 
+                
+                addSuccessMessage.textContent = `"${itemName}" submitted to your Pantry!`;
+                addSuccessMessage.style.display = 'block';
+
+                addItemForm.reset(); 
+                await fetchPantryItems(); 
+
+            } catch (error) {
+                console.error('Error adding item (index.html):', error);
+                addErrorMessage.textContent = `Failed to add item: ${error.message}`;
+                addErrorMessage.style.display = 'block';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText; 
+                setTimeout(() => {
+                    addSuccessMessage.style.display = 'none';
+                    addErrorMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        clearFormBtn.addEventListener('click', () => {
+            addItemForm.reset(); 
+            addErrorMessage.style.display = 'none'; 
+            addSuccessMessage.style.display = 'none';
+        });
+
+        addItemForm.addEventListener('submit', handleAddItem);
+        document.addEventListener('DOMContentLoaded', fetchPantryItems);
+    </script>
+
+</body>
+</html>
